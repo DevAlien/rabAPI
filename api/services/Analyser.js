@@ -24,11 +24,13 @@ class Analyser {
     classifier.addDocument('posso andare', 'dove');
     classifier.addDocument('dove trovo', 'dove');
     classifier.addDocument('dove', 'dove');
-    classifier.addDocument('ci sono', 'essere');
-    classifier.addDocument('c\'è il', 'essere');
-    classifier.addDocument('c\'è la', 'essere');
-    classifier.addDocument('c\'è un', 'essere');
-    classifier.addDocument('c\'è una', 'essere');
+
+    // classifier.addDocument('ci sono', 'essere');
+    // classifier.addDocument('c\'è il', 'essere');
+    // classifier.addDocument('c\'è la', 'essere');
+    // classifier.addDocument('c\'è un', 'essere');
+    // classifier.addDocument('c\'è una', 'essere');
+
     classifier.train();
   }
   
@@ -47,7 +49,7 @@ class Analyser {
   }
 
   getHighestClassification(classifications) {
-    var res = { value: 0};
+    let res = { value: 0};
     classifications.forEach((c) => {
       console.log(c)
       if (c.value > res.value) {
@@ -59,19 +61,20 @@ class Analyser {
   }
 
   analyse(sentence) {
-    var result = {};
-    var what = this.getHighestClassFromSentence(sentence);
-    if (what.value > 0.5) {
-      result.what = what.label;
-    }
+    let result = {};
+    let what = this.getHighestClassFromSentence(sentence);
+    let ofWhat, normalized, city;
 
-    var ofWhat = this.getHighestClassification(placesClassifier.getClassifications(sentence));
+    what.value > 0.5 && (result.what = what.label);
+
+    ofWhat = this.getHighestClassification(placesClassifier.getClassifications(sentence));
     if (ofWhat.value > 0.5) {
       result.ofWhat = ofWhat.label;
     }
-    var normalized = cities.normalizeCity(sentence);
     
-    var city = cities.checkCity(normalized);
+    normalized = cities.normalizeCity(sentence);
+    
+    city = cities.checkCity(normalized);
     if (city) {
       result.city = city;
     }

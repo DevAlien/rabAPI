@@ -2,25 +2,31 @@ var queryBuilder = require('./QueryBuilder');
 var db = require('../helpers/orient');
 
 class QueryBuilder {
-  build(analyzed) {
-    if (analyzed.ofWhat) {
-      return this.buildPlace(analyzed);
+  build(analysed) {
+    if (analysed.ofWhat) {
+      return this.buildPlace(analysed);
     }
   }
 
-  buildPlace(analyzed) {
-    let query = queryBuilder.build(analyzed);
-    if (analyzed.what === 'orario') {
-      return this.buildTime(analyzed, query);
+  buildPlace(analysed) {
+    let query = queryBuilder.build(analysed);
+    
+    if (analysed.what === 'orario') {
+      return this.buildTime(analysed, query);
     }
-  }
 
-  buildTime(analyzed, query) {
+  }
+  
+  buildTime(analysed, query) {
+    let msg, message, time;
+    console.log('aaa')
+    console.log(query)
     return db.query(query).then((data) => { 
-      var msg = "Ho trovato " + data.length + " risultat" + ((data.length === 1) ? 'o' : 'i') + "\n";
+      msg = "Ho trovato " + data.length + " risultat" + ((data.length === 1) ? 'o' : 'i') + "\n";
       data.forEach((d) => {
-        let message = "\n" + d.name + " in " + d.address + "\n";
-        let time = JSON.parse(d.time);
+        d = this.dataArrayToString(d);
+        message = "\n" + d.name + " in " + d.address + (analysed.deep ? (' ' + d.cityName) : '') + "\n";
+        time = JSON.parse(d.time);
         time = time[this.getToday()];
         if (time.length === 0) {
           message = message + 'Oggi è chiuso';
@@ -31,13 +37,31 @@ class QueryBuilder {
       });
 
       return new Promise((resolve, reject) => {
-        resolve(msg);
+        resolve({results: data.length, message: msg, raw: data});
       })
     });
   }
 
+  dataArrayToString(data) {
+    if (Array.isArray(data.name)) {
+      data.name = data.name[0];
+    }
+    if (Array.isArray(data.address)) {
+      data.address = data.address[0];
+    }
+    if (Array.isArray(data.time)) {
+      data.time = data.time[0];
+    }
+    if (Array.isArray(data.cityName)) {
+      data.cityName = data.cityName[0];
+    }
+
+    return data;
+  }
+
   printTime(time) {
-    var times = [];
+    let times = [];
+
     time.forEach((t) => {
       times.push('dalle ' + t.Start + ' alle ' + t.Finish);
     })
@@ -46,7 +70,8 @@ class QueryBuilder {
   }
 
   getToday() {
-    var day = new Date().getDay();
+    let day = new Date().getDay();
+
     day = day + 6;
     day = day % 7;
 
