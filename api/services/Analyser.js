@@ -12,6 +12,9 @@ class Analyser {
   trainClassifier() {
     classifier.addDocument('orario', 'orario');
     classifier.addDocument('che ora', 'orario');
+    classifier.addDocument('a che ora', 'orario');
+    classifier.addDocument('a che ora chiude', 'orario');
+    classifier.addDocument('a che ora apre', 'orario');
     classifier.addDocument('quando', 'orario');
     classifier.addDocument('fino a', 'orario');
     classifier.addDocument('apertura', 'orario');
@@ -24,6 +27,8 @@ class Analyser {
     classifier.addDocument('ci sono', 'essere');
     classifier.addDocument('c\'è il', 'essere');
     classifier.addDocument('c\'è la', 'essere');
+    classifier.addDocument('c\'è un', 'essere');
+    classifier.addDocument('c\'è una', 'essere');
     classifier.train();
   }
   
@@ -44,6 +49,7 @@ class Analyser {
   getHighestClassification(classifications) {
     var res = { value: 0};
     classifications.forEach((c) => {
+      console.log(c)
       if (c.value > res.value) {
         res = c;
       }

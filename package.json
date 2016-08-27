@@ -7,6 +7,7 @@
   "dependencies": {
     "axolot": "^1.0.0",
     "jsonwebtoken": "^7.1.9",
+    "natural": "^0.4.0",
     "orientjs": "^2.2.2",
     "passport": "^0.3.2",
     "sails-mongo": "^0.12.1"
