@@ -5,20 +5,18 @@ module.exports = {
   path: '/questions',
   model: 'questions',
   actions: {
-    'get /': [
+    'post /': [
       function (req, res) {
-        var accessToken = Service.token.sign({ id: 'asd', scopes: ['master'] });
-        res.send(accessToken);
-        // console.log(Service.Analyser.analyse());
-        
+        let analysed = Service.Analyser.analyse(req.body.message);
+        Service.ResponseBuilder.build(analysed).then((message) => {
+          res.send({analysed: analysed, message: message});
+        });
       }
     ],
   },
   sockets: {
     'send': function(message, cb) {
-      var analysed = Service.Analyser.analyse(message);
-      console.log(analysed)
-      console.log('---')
+      let analysed = Service.Analyser.analyse(message);
       Service.ResponseBuilder.build(analysed).then((message) => {
         cb(analysed, message);
       });      

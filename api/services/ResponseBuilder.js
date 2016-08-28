@@ -14,13 +14,22 @@ class QueryBuilder {
     if (analysed.what === 'orario') {
       return this.buildTime(analysed, query);
     }
-
+    if (analysed.what === 'informazioni') {
+      return this.buildInformations(analysed, query);
+    }
   }
   
+  buildInformations(analysed, query) {
+    return db.query(query).then((data) => {
+      return new Promise((resolve, reject) => {
+        resolve({results: data.length, raw: data});
+      });
+    });
+  }
+
   buildTime(analysed, query) {
     let msg, message, time;
-    console.log('aaa')
-    console.log(query)
+
     return db.query(query).then((data) => { 
       msg = "Ho trovato " + data.length + " risultat" + ((data.length === 1) ? 'o' : 'i') + "\n";
       data.forEach((d) => {

@@ -1,10 +1,16 @@
 
 class QueryBuilder {
   build(analysed) {
-    console.log(analysed)
+    if (analysed.what === 'informazioni') {
+      return this.buildInformations(analysed);
+    }
     if (analysed.ofWhat) {
       return (analysed.deep && analysed.deep > 1) ? this.buildPlaceDeep(analysed, analysed.deep) : this.buildPlace(analysed);
     }
+  }
+
+  buildInformations(analysed) {
+    return 'select from Information where tags = \'' + analysed.ofWhat + '\''; 
   }
 
   buildPlace(analysed) {
